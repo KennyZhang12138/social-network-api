@@ -16,9 +16,8 @@ module.exports = {
   async getSingleUser(req, res) {
     try {
       const user = await User.findOne({ _id: req.params.id })
-        .populate({ path: "thoughts", select: "-__v" })
-        // populate user friends
-        .populate({ path: "friends", select: "-__v" })
+        .populate("thoughts")
+        .populate("friends")
         .select("-__v");
       !user
         ? res.status(404).json({ message: "No user with that ID" })
@@ -104,8 +103,8 @@ module.exports = {
     }
   },
 
-  async deleteFriend(req, res){
-    try{
+  async deleteFriend(req, res) {
+    try {
       const user1 = await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $pull: { friends: req.params.friendId } },
@@ -123,9 +122,9 @@ module.exports = {
         return res.status(404).json({ message: "No user with that ID" });
       }
       res.json({ message: "Successfully deleted the friend" });
-    }catch(err){
+    } catch (err) {
       console.log(err);
       res.status(500).json(err);
     }
-  }
+  },
 };
